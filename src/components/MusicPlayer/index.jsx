@@ -10,12 +10,16 @@ import VolumeBar from './VolumeBar';
 
 const MusicPlayer = () => {
   const { activeSong, currentSongs, currentIndex, isActive, isPlaying } = useSelector((state) => state.player);
+
   const [duration, setDuration] = useState(0);
   const [seekTime, setSeekTime] = useState(0);
   const [appTime, setAppTime] = useState(0);
-  const [volume, setVolume] = useState(0.3);
+
   const [repeat, setRepeat] = useState(false);
   const [shuffle, setShuffle] = useState(false);
+
+  const [volume, setVolume] = useState(0.3);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,16 +36,6 @@ const MusicPlayer = () => {
     }
   };
 
-  const handleNextSong = () => {
-    dispatch(playPause(false));
-
-    if (!shuffle) {
-      dispatch(nextSong((currentIndex + 1) % currentSongs.length));
-    } else {
-      dispatch(nextSong(Math.floor(Math.random() * currentSongs.length)));
-    }
-  };
-
   const handlePrevSong = () => {
     if (currentIndex === 0) {
       dispatch(prevSong(currentSongs.length - 1));
@@ -52,15 +46,25 @@ const MusicPlayer = () => {
     }
   };
 
+  const handleNextSong = () => {
+    dispatch(playPause(false));
+
+    if (!shuffle) {
+      dispatch(nextSong((currentIndex + 1) % currentSongs.length));
+    } else {
+      dispatch(nextSong(Math.floor(Math.random() * currentSongs.length)));
+    }
+  };
+
   return (
-    <div className='relative sm:px-12 px-8 w-full flex items-center justify-between'>
+    <div className="relative sm:px-12 px-8 w-full flex items-center justify-between">
       <Track
         isPlaying={isPlaying}
         isActive={isActive}
         activeSong={activeSong}
       />
 
-      <div className='flex-1 flex flex-col items-center justify-center'>
+      <div className="flex-1 flex flex-col items-center justify-center">
         <Controls
           isPlaying={isPlaying}
           isActive={isActive}
@@ -76,7 +80,7 @@ const MusicPlayer = () => {
 
         <Seekbar
           value={appTime}
-          min='0'
+          min="0"
           max={duration}
           onInput={(event) => setSeekTime(event.target.value)}
           setSeekTime={setSeekTime}
@@ -98,8 +102,8 @@ const MusicPlayer = () => {
 
       <VolumeBar
         value={volume}
-        min='0'
-        max='1'
+        min="0"
+        max="1"
         onChange={(event) => setVolume(event.target.value)}
         setVolume={setVolume}
       />
