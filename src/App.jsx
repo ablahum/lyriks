@@ -43,7 +43,7 @@ const App = () => {
               />
 
               <Route
-                path="/songs/:songid"
+                path="/songs/:songId"
                 element={<SongDetails />}
               />
 
