@@ -3,16 +3,27 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { DetailsHeader, Error, Loader, RelatedSongs } from '../components';
 import { setActiveSong, playPause } from '../redux/features';
-import { useGetSongDetailsQuery } from '../redux/services';
+import { useGetSongDetailsQuery, useGetSongRelatedQuery } from '../redux/services';
 
 const SongDetails = () => {
   const dispatch = useDispatch();
   const { songId } = useParams();
   const { activeSong, isPlaying } = useSelector((state) => state.player);
 
+  const { data, isFetching: isFetchingRelatedSongs, error } = useGetSongRelatedQuery({ songId });
   const { data: songData, isFetching: isFetchingSongDetails } = useGetSongDetailsQuery({ songId });
 
-  console.log(songData);
+  if (isFetchingSongDetails && isFetchingRelatedSongs) return <Loader title="Searching song details..." />;
+  if (isFetchingSongDetails || isFetchingRelatedSongs) return <Loader title="Searching song details..." />;
+
+  if (error) return <Error />;
+
+  const handlePause = () => dispatch(playPause(false));
+
+  const handlePlay = ({ song, idx }) => {
+    dispatch(setActiveSong({ song, data, idx }));
+    dispatch(playPause(true));
+  };
 
   return (
     <div className="flex flex-col">
@@ -39,6 +50,14 @@ const SongDetails = () => {
           )}
         </div>
       </div>
+
+      <RelatedSongs
+        data={data}
+        isPlaying={isPlaying}
+        activeSong={activeSong}
+        handlePlay={handlePlay}
+        handlePause={handlePause}
+      />
     </div>
   );
 };
