@@ -4,13 +4,14 @@ import { Error, Loader, SongCard } from '../components';
 import { selectGenreListId } from '../redux/features';
 import { genres } from '../constants';
 
-import { useGetTopChartsQuery } from '../redux/services';
+import { useGetSongsByGenreQuery } from '../redux/services';
 
 const Discover = () => {
   const dispatch = useDispatch();
-  const { activeSong, isPlaying } = useSelector((state) => state.player);
-  const { data, isFetching, error } = useGetTopChartsQuery();
-  const genreTitle = 'Pop';
+  const { activeSong, isPlaying, genreListId } = useSelector((state) => state.player);
+  const { data, isFetching, error } = useGetSongsByGenreQuery(genreListId || 'POP');
+
+  const genreTitle = genres.find(({ value }) => value === genreListId)?.title;
 
   if (isFetching) return <Loader title="Loading songs..." />;
   if (error) return <Error />;
@@ -22,7 +23,7 @@ const Discover = () => {
 
         <select
           onChange={(e) => dispatch(selectGenreListId(e.target.value))}
-          value=""
+          value={genreListId || 'pop'}
           className="bg-black text-gray-300 p-3 text-sm rounded-lg outline-none sm:mt-0 mt-5"
         >
           {genres.map((genre) => (
